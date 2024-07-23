@@ -1,0 +1,105 @@
+{{> header_principal}}
+<link rel="stylesheet" href="../css/dragImage/index.css">
+
+<section class="c-profile">
+    <article class="container mx-auto md:flex">
+        {{> seller/options_seller }}
+        <div class="div-profile mx-auto w-full">
+            <figure class="div-profile__slider">
+                <img src="{{coverStore store.imagenPortada}}" id="coverStore">
+            </figure>
+            <img class="div-profile--img" src="{{imageStore store.imagen}}" id="avatarStore">
+            <div class="container">
+                <form class="div-profile__info-content pb-10" action="/seller/store/update" method="POST">
+                    <h1 class="div-profile__info--h1 font-bold">{{store.nombre}}</h1>
+                    <div class="div-profile__label md:flex">
+                        <label for="usuario" class="justify-between flex mb-3 items-center justify-between">
+                            <span>Usuario</span>
+                            <input class="" type="text" id="usuario" value="{{user.nombres}}" readonly required>
+                        </label>
+                        <label for="nombre" class="justify-between flex mb-3 items-center justify-between">
+                            <span>Nombre</span>
+                            <input class="" type="text" id="nombre" value="{{store.nombre}}" name="nombre" type="text"
+                                required>
+                        </label>
+                        <label for="descripcion" class="justify-between flex mb-3 items-center justify-between">
+                            <span>Descripción</span>
+                            <input class="" id="descripcion" type="text" value="{{store.descripcion}}"
+                                name="descripcion" required>
+                        </label>
+                        <label for="telefono" class="justify-between flex mb-3 items-center justify-between">
+                            <span>Télefono</span>
+                            <input class="" id="telefono" type="text" value="{{store.telefono}}" name="telefono"
+                                required>
+                        </label>
+                        <label for="email" class="justify-between flex mb-3 items-center justify-between">
+                            <span>Correo</span>
+                            <input class="" id="email" type="email" value="{{store.email}}" name="email" type="email"
+                                required>
+                        </label>
+                        <label for="telefono" class="justify-between flex mb-3 items-center justify-between">
+                            <span>Página web</span>
+                            <input class="" id="telefono" type="text" name="pagina_web" value="{{store.pagina_web}}">
+                        </label>
+                        <label for="" class="items:start justify-between flex mb-3 justify-between">
+                            <span>Foto de perfil</span>
+                            <div class="w-3/5">
+                                <div class="sc-ui-image-uploader sc-ui-image-uploader--default" aria-disabled="false"
+                                    id="areafile">
+                                    <div class="sc-ui-image-uploader__container" role="button" tabindex="0">
+                                        {{> svgs/icon-dragImage}}
+                                        <a class="sc-ui-image-uploader__link">Agrega o arrastra tus fotos aquí</a>
+                                    </div>
+                                    <input
+                                        accept="image/jpg, image/jpeg, image/png, image/webp, image/JPG, image/JPEG, image/PNG, image/WEBP"
+                                        type="file" multiple="" autocomplete="off" style="display: none;">
+                                </div>
+                                <div>
+                                    <p class="text-xs pt-4 pb-2 font-bold">Requerimientos de la imagen:</p>
+                                    <p class="text-xs"><b>Tamaño</b> 200px de alto por 200px de ancho.</p>
+                                    <p class="text-xs"><b>Peso</b> maximo de la imagen: 5mb.</p>
+                                    <p class="text-xs pb-4"><b>Formato</b> de imagen .PNG y .JPG</p>
+                                </div>
+                            </div>
+                        </label>
+                        <input id="avatarStoreForm" type="text" style="display: none;" name="imagen"
+                            value="{{store.imagen}}">
+                        <input id="coverStoreForm" type="text" style="display: none;" name="imagenPortada"
+                            value="{{store.imagenPortada}}">
+                        <label for="" class="items:start justify-between flex mb-3 justify-between">
+                            <span>Foto de portada</span>
+                            <div class="w-3/5">
+                                <div class="sc-ui-image-uploader sc-ui-image-uploader--default" aria-disabled="false"
+                                    id="areafileportada">
+                                    <div class="sc-ui-image-uploader__container" role="button" tabindex="0">
+                                        {{> svgs/icon-dragImage}}
+                                        <a class="sc-ui-image-uploader__link">Agrega o arrastra tus fotos aquí</a>
+                                    </div>
+                                    <input
+                                        accept="image/jpg, image/jpeg, image/png, image/webp, image/JPG, image/JPEG, image/PNG, image/WEBP"
+                                        type="file" multiple="" autocomplete="off" style="display: none;">
+                                </div>
+                                <div>
+                                    <p class="text-xs pt-4 pb-2 font-bold">Requerimientos de la imagen:</p>
+                                    <p class="text-xs"><b>Tamaño</b> 1300px de ancho por 300px de alto.</p>
+                                    <p class="text-xs"><b>Peso</b> de maximo de la imagen 5mb.</p>
+                                    <p class="text-xs pb-4"><b>Formato</b> de imagen .PNG y .JPG</p>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                    <input class="div-profile__info--input" type="submit" value="Guardar">
+                </form>
+            </div>
+        </div>
+
+    </article>
+</section>
+<script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-storage.js"></script>
+
+<script src="{{URL}}/js/dragImageStore.js"></script>
+<script src="{{URL}}/js/dragCoverStore.js"></script>
+<script src="{{URL}}/js/uploadImage.js"></script>
+
+{{> footer}}

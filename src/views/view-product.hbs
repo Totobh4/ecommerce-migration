@@ -1,0 +1,185 @@
+{{> header_principal}}
+<section class="c-view-product">
+    {{!-- <article class="c-view-product__content"> --}}
+        <article class="md:flex justify-between py-14 mx-auto container ">
+            <div class="justify-between md:flex w-full md:w-1/2">
+                <div class="c-view-product__list-images">
+                    {{#each photography}}
+                    <img class="c-view-product__list-images--img" src="{{this.dataValues.url}}">
+                    {{/each}}
+                </div>
+                <div class="c-view-product__image w-full md:w-3/4">
+                    <img class="c-view-product__image--img" src="{{product.dataValues.imagen}}">
+                </div>
+            </div>
+            <div class="w-10/12 mx-auto md:w-1/2 pl-0 md:pl-14 pt-14 md:pt-0">
+                <div class="c-view-product__description__content">
+                    <p class="c-view-product__description--stock">
+                    <p style="display: inline;" id="stock-producto">{{product.dataValues.stock}}</p> disponibles</p>
+                    <p class="c-view-product__description--name-produc">{{product.dataValues.titulo}}</p>
+                    <p class="c-view-product__description--price">$ {{product.dataValues.precio}}</p>
+                    <ul class="c-view-product__details">
+                        <li class="c-view-product__details__li">
+                            <i class="fas fa-store"></i>
+                            <p class="c-view-product__details__li--p">Vendido por
+                                <a href="/store/{{store.dataValues.id}}"><b>{{store.dataValues.nombre}}</b></a>
+                            </p>
+                        </li>
+                        <li class="c-view-product__details__li">
+                            <i class="fas fa-truck"></i>
+                            <p class="c-view-product__details__li--p">Precio de envio <b>Se debe acordar con el
+                                    vendedor</b></p>
+                        </li>
+                        <li class="c-view-product__details__li">
+                            <i class="far fa-check-circle"></i>
+                            <p class="c-view-product__details__li--p">Garantia del producto <b>1 año</b></p>
+                        </li>
+                    </ul>
+                    {{#ifEquals user.id store.dataValues.id}}
+                    <a href="/seller/edit-product/{{@root.product.dataValues.id}}">
+                        <i class="far fa-edit fa-lg" aria-hidden="true"></i> </a>
+                    {{else}}
+                    <div class="c-view-product__colours">
+                        <form action="/user/checkout/product" method="post">
+                            <p class="c-view-product__colours--p">Cantidad</p>
+                            <div class="flex">
+                                <select class="w-14 h-10 border-2 px-2 border-black rounded mr-4" name="cantidad"
+                                    id="cantidad" required>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="" id="opOtraCantidad">Otra cantidad</option>
+                                </select>
+                                <input type="number" placeholder="Ingrese la cantidad" id="otraCantidad"
+                                    style="display: none;">
+                                <input type="hidden" name="id_producto" value="{{@root.product.dataValues.id}}">
+                                <button class="flex items-center justify-center w-44 h-10 bg-pink-300 rounded"
+                                    id="btnPurchase" type="subit">Comprar</button>
+                            </div>
+                        </form>
+                    </div>
+                    <br>
+                    <div class="flex">
+                        <a class="mr-4 flex items-center justify-center w-44 h-10 bg-gray-300 rounded"
+                            href="/user/favorites/{{@root.product.dataValues.id}}">
+                            Agregar Favoritos
+                        </a><br>
+                        <a class="text-white flex items-center justify-center w-44 h-10 bg-pink-800 rounded"
+                            href="/user/cart/{{@root.product.dataValues.id}}">
+                            Agregar Carrito
+                        </a>
+                    </div>
+                    {{/ifEquals}}
+                </div>
+            </div>
+        </article>
+</section>
+
+<section class="c-details-product">
+    <article class="w-11/12 md:w-9/12 mx-auto py-10">
+        <div class="c-details-product__info w-full md:w-9/12 mx-auto">
+            <div class="c-details-product__info__content ">
+                <p class="c-details-product__info--p">{{product.dataValues.detalle}}</p>
+                <button class="c-details-product__info--button" onclick="">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+        </div>
+        <div class="c-details-product__info w-full md:w-9/12 mx-auto">
+            <div class="c-details-product__info__content ">
+                <p class="c-details-product__info--p">{{product.dataValues.descripcion}}</p>
+                <button class="c-details-product__info--button" onclick=""><i class="fas fa-plus"></i></button>
+            </div>
+        </div>
+        <div class="w-full md:w-9/12 mx-auto bg-white" style="border-radius: 8px;">
+            <div class="w-12/12 mx-auto pb-4 mb-4">
+                <p class="w-11/12 mx-auto pt-8 pb-4 text-xl font-bold">Comentarios</p>
+                {{#each comments}}
+                {{> product/comments comment=this}}
+                {{/each}}
+            </div>
+        </div>
+        <div class="w-full md:w-9/12 mx-auto bg-white rounded-bl-lg rounded-br-lg pt-4 pb-10">
+            <p class="w-11/12 mx-auto pb-4 pt-8 text-xl font-bold">Preguntas</p>
+            {{#unless isown}}
+            {{#if isAuthenticated}}
+            <form class="w-11/12 mx-auto flex items-center justify-between mb-5" action="/product/make-question"
+                method="POST">
+                <input class="w-10/12 border-gray-600 rounded py-2 px-4 border-4 border-black border-opacity-25"
+                    name="pregunta" placeholder="Haz una pregunta!">
+                <input type="hidden" value="{{product.dataValues.id}}" name="id_producto">
+                <button
+                    class="rounded flex items-center justify-center text-white w-1/6 h-12 duration-300 bg-pink-500 hover:bg-pink-800"
+                    type="submit">Preguntar</button>
+            </form>
+            {{else}}
+            <h2 class="flex flex-wrap bg-gray-100 p-4 rounded">
+                Regístrate
+                <p class="underline px-2 text-blue-500 cursor-pointer" onclick="registerModal()">aquí</p>
+                para hacer una pregunta
+            </h2>
+            {{/if}}
+            {{/unless}}
+            {{#each questions}}
+            {{> product/questions question=this}}
+            {{/each}}
+        </div>
+    </article>
+</section>
+
+<section class="c-products-recommended">
+    <article class="c-products-recommended__content px-10 md:px-0">
+        <p class="c-products-recommended--p">Productos relacionados</p>
+        <div class="c-products-recommended__grid">
+            {{#each categorys}}
+            <a class="c-products-recommended__product" href="{{this.dataValues.id}}">
+                <img class="c-products-recommended__product--img" src="{{this.dataValues.imagen}}">
+            </a>
+            {{/each}}
+        </div>
+    </article>
+</section>
+<script>
+    window.onload = main;
+    function main() {
+        localStorage.setItem('ultima_visita', '{{product.dataValues.id_categoria}}');
+        fetch(`${location.origin}/getVisita/{{product.dataValues.id}}`).then()
+    }
+</script>
+<script>
+    document.getElementById("cantidad").addEventListener("change", () => {
+        if (document.getElementById("cantidad").value == 0) {
+            document.getElementById("otraCantidad").style.display = "block";
+        } else {
+            document.getElementById("otraCantidad").style.display = "none";
+        }
+        document.getElementById("otraCantidad").addEventListener("blur", () => {
+            if (document.getElementById("otraCantidad").value) {
+                if (Number(document.getElementById("otraCantidad").value) <= Number(document.getElementById("stock-producto").innerText)) {
+                    document.getElementById("cantidad").value = document.getElementById("otraCantidad").value;
+                    if (!document.getElementById("cantidad").value) {
+                        document.getElementById("cantidad").innerHTML += `<option value="${document.getElementById("otraCantidad").value}">${document.getElementById("otraCantidad").value}</option>`
+                        document.getElementById("cantidad").value = document.getElementById("otraCantidad").value;
+                    }
+                    document.getElementById("otraCantidad").style.display = "none";
+                } else {
+                    error("No hay esta cantidad de productos en stock");
+                }
+            }
+        });
+    });
+</script>
+<script>
+    window.onload = () => {
+        const stock = Number(document.getElementById("stock-producto").innerText);
+        if (!stock) {
+            document.querySelector("#btnPurchase").setAttribute("disabled", "true");
+            document.querySelector("#cantidad").setAttribute("disabled", "true");
+            document.querySelector("#btnPurchase").innerText = "Producto sin stock"
+        }
+    }
+</script>
+{{> footer}}

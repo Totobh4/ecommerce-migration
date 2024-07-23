@@ -1,0 +1,31 @@
+<div class="c-shopping-cart__product block md:flex p-8" id="hbs-{{item.id_producto}}">
+    <a class="flex md:w-3/12 rounded-md overflow-hidden" style="height: 200px;" href="/product/{{item.id_producto}}">
+        <img class="w-full h-full object-center object-cover" src="{{item.imagen}}">
+    </a>
+    <div class="c-shopping-cart__p-info w-full md:w-9/12">
+        <div class="c-shopping-cart__p-info--content">
+            <p class="c-shopping-cart--description">
+                {{item.titulo}}
+            </p>
+            <div class="c-shopping-count-text">
+                <p class="c-shopping-text">Cantidad:</p>
+                <div class="c-shopping-count" data-id-product="{{item.id_producto}}" data-id-item="{{item.id_item}}">
+                    <i class="fas fa-minus" id="minus"></i>
+                    <p class="c-shopping-count--p" id="countProduct">{{item.cantidad}}</p>
+                    <i class="fas fa-plus" id="plus"></i>
+                </div>
+            </div>
+            <p class="c-shopping-cart--brand">{{item.marca}}</p>
+            <p class="c-shopping-cart--price text-red-500" id="itemcartId{{item.id_item}}">Precio: $ <b
+                    class="text-red-500">{{item.precio}}</b></p>
+            <form class="sm:flex flex-wrap items-center" action="/user/checkout/product" method="POST">
+                <input type="hidden" name="id_producto" value="{{item.id_producto}}">
+                <input type="hidden" name="cantidad" value="{{item.cantidad}}">
+                <button class="c-shopping-cart--buy" type="submit">Comprar</button>
+                <a class="c-shopping-cart--delete" href="/user/cart/delete/{{item.id_item}}">Eliminar</a>
+                <a class="c-shopping-cart--favourite" href="/user/favorites/{{item.id_producto}}">Guardar en
+                    favoritos</a>
+            </form>
+        </div>
+    </div>
+</div>

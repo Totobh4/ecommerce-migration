@@ -1,0 +1,36 @@
+{{> header_principal}}
+<div id="modal"></div>
+<section class="c-profile">
+    <article class="container mx-auto md:flex justify-between">
+        {{> seller/options_seller }}
+        <div class="py-14 mx-auto md:mx-0 w-11/12 md:w-9/12">
+            <div class="c-profile__info__content">
+                <form class="c-user-shopping" action="">
+                    <h2>Mis ventas</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                        {{#each sales}}
+                        <div class="border border-gray-500 rounded p-8">
+                            <p class="">Pedido: <b>#{{this.id_venta}}</b></p>
+                            <p class="">Fecha: <b>{{this.fecha}}</b></p>
+                            <p class="">Total: <b>{{this.total}}</b></p>
+                            <p class="font-bold pb-6">{{this.numero_items}} productos</p>
+                            <a class="rounded mt-4 w-100 p-2 bg-pink-300 duration-300 hover:bg-pink-400"
+                                href="/seller/details-sale/{{this.id_venta}}">Ver
+                                detalles</a>
+                        </div>
+                        {{/each}}
+                    </div>
+                </form>
+            </div>
+            
+        </div>
+    </article>
+</section>
+
+<script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-storage.js"></script>
+
+<script src="../js/dragImage.js"></script>
+<script src="../js/uploadImage.js"></script>
+
+{{> footer }}

@@ -1,0 +1,35 @@
+{{> header_principal}}
+
+<div class="w-6/12 mx-auto border-4 my-10 p-10">
+    {{#if addresses}}
+    <select name="direccion">
+        {{#each addresses}}
+        <option value="{{this.id_direccion}}">{{this.nombre}} {{this.avenida}} {{this.this.calle}} {{this.numero}}
+            {{this.barrio}}</option>
+        {{/each}}
+    </select>
+    {{else}}
+    <a class="underline text-blue-500 font-medium" href="/user/home">Crear dirección</a>
+    {{/if}}
+
+    {{#each pack}}
+    <h3 class="pt-10 font-normal">Paquete: <b>{{@index}}</b></h3>
+    {{#each this}}
+    <div class="md:flex mt-2 p-6 rounded w-full bg-gray-100">
+        <img class="rounded-full shadow-xl" src="{{this.imagen}}" alt="imagen producto" style="height: 150px; width: 150px;">
+        <div class="pl-8">
+            <h3 class="text-2xl">{{this.titulo}}</h3>
+            <p>cantidad: <span>{{this.cantidad}}</span></p>
+            <h4 class="font-normal text-red-500 text-xl">Precio: {{this.precio}}</h4>
+            <h4 class="pt-4">Opciones de envío</h4>
+            <p>A acordar con el vendedor</p>
+        </div>
+    </div>
+    {{/each}}
+    {{/each}}
+    <form class="w-full flex justify-center pt-8" action="/user/order/cart" method="POST">
+        <button class="py-2 px-6 rounded text-white bg-pink-500 hover:bg-pink-800" type="submit">Continuar con la compra</button>
+    </form>
+</div>
+
+{{> footer}}

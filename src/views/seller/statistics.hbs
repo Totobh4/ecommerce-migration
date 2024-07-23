@@ -1,0 +1,173 @@
+{{> header_principal}}
+<div id="modal"></div>
+<section class="c-profile">
+    <article class="container mx-auto md:flex justify-between">
+        {{> seller/options_seller }}
+        <div class="w-11/12 mx-auto md:w-4/5 px-0 lg:px-20 pb-14">
+            <div class=" w-full py-14 mx-auto">
+                <div class="w-full">
+                    <h2 class="text-2xl font-medium pb-8">Mis Estadisticas</h2>
+                    {{#if products}}
+                    <div class="flex items-center justify-between flex-wrap">
+                        <div class="flex mt-4">
+                            <select class="w-60 h-10 border-2 px-2 border-black rounded mr-4" id="estadisticas"
+                                onclick="cambio()">
+                                {{#each products}}
+                                <option value="{{this.dataValues.id}}">{{this.dataValues.titulo}}</option>
+                                {{/each}}
+                            </select>
+                            <select class="w-40 h-10 border-2 px-2 border-black rounded mr-4 pl-2" id="interval"
+                                onclick="cambio()">
+                                <option value="week">Semana</option>
+                                <option value="month">Mes</option>
+                                <option value="year">Año</option>
+                            </select>
+                        </div>
+                        <a class="px-4 mt-4 h-10 flex items-center justify-center rounded text-white bg-pink-500 hover:bg-pink-800 duration-300 font-medium"
+                            href="">
+                            Descargar reporte
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="grid md:grid-cols-1 gap-4">
+                <div class="rounded p-6 border-2 shadow-lg flex justify-center items-center overflow-hidden"
+                    id="columnchart_values" style="width: 100%; height: 500px;"></div>
+                <div class="rounded p-6 border-2 shadow-lg flex justify-center items-center overflow-hidden"
+                    id="piechart_3d" style="width: 100%; height: 500px;"></div>
+                {{else}}
+                <div
+                    class="h-80 rounded p-6 border-2 shadow-lg flex justify-center items-center overflow-hidden bg-pink-100">
+                    <i class="text-7xl text-pink-500 fas fa-ban"></i>
+                </div>
+                {{/if}}
+            </div>
+        </div>
+    </article>
+</section>
+<script>
+    cambio();
+    todos();
+
+    function cambio() {
+        fetch(`${location.origin}/getVisitas/${document.getElementById("estadisticas").value}`)
+            .then(res => res.json())
+            .then(data => {
+                if (document.getElementById('interval').value === 'week') {
+                    data.visitas.visitas.splice(0, (data.visitas.visitas.length - 7));
+                    let array = [["Dia", "visitas", { role: "style" }]]
+                    data.visitas.visitas.map(item => {
+                        array.push([item.fecha, item.contador, "#C50084"]);
+                    });
+                    grafico(array);
+                } else if (document.getElementById('interval').value === 'month') {
+                    let f = new Date();
+                    let month = f.getMonth() + 1;
+                    const weeks = data.visitas.visitas.filter(item => {
+                        if (item.fecha.split('/')[1] == month) {
+                            return item;
+                        }
+                    });
+                    let list = [];
+                    let time = 1;
+                    let i = 1;
+                    let acc = 0;
+                    weeks.map(item => {
+                        acc += item.contador
+                        if (time % 7 === 0 || time === weeks.length) {
+                            list.push([`semana ${i}`, acc, "#C50084"]);
+                            acc = 0;
+                            i++;
+                        }
+                        time++;
+                    });
+                    let root = [["Semana", "visitas", { role: "style" }]]
+                    let array = root.concat(list);
+                    grafico(array);
+                } else if (document.getElementById('interval').value === 'year') {
+                    let f = new Date();
+                    let year = f.getFullYear();
+                    const months = data.visitas.visitas.filter(item => {
+                        if (item.fecha.split('/')[2] == year) {
+                            return item;
+                        }
+                    });
+                    let listMonths = [];
+                    months.map(item => {
+                        if (listMonths.find(find => find.mes === item.fecha.split('/')[1]) !== undefined) {
+                            listMonths.find(find => find.mes === item.fecha.split('/')[1]).total += item.contador;
+                        } else {
+                            listMonths.push({
+                                "mes": item.fecha.split('/')[1],
+                                "total": item.contador
+                            });
+                        }
+                    })
+                    let array = [["Mes", "visitas", { role: "style" }]]
+                    listMonths.map(item => {
+                        array.push([toMonth(Number(item.mes)), item.total, "#C50084"]);
+                    });
+                    grafico(array);
+                }
+            });
+    }
+
+    function toMonth(n) {
+        const months = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+        return months[n - 1];
+    }
+
+    function todos() {
+        fetch(`${location.origin}/getAllVisitas`)
+            .then(res => res.json())
+            .then(data => {
+                graficoTodos(data.todos)
+                });
+    }
+
+    function grafico(array) {
+        google.charts.load("current", { packages: ['corechart'] });
+        google.charts.setOnLoadCallback(drawChart);
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable(array);
+
+            var view = new google.visualization.DataView(data);
+            view.setColumns([0, 1,
+                {
+                    calc: "stringify",
+                    sourceColumn: 1,
+                    type: "string",
+                    role: "annotation"
+                },
+                2]);
+
+            var options = {
+                title: `Estadisticas del numero de visitas de un producto`,
+                width: "90%",
+                height: 300,
+                bar: { groupWidth: "95%" },
+                legend: { position: "none" }
+            };
+            var chart = new google.visualization.ColumnChart(document.getElementById("columnchart_values"));
+            chart.draw(view, options);
+        }
+    }
+
+    function graficoTodos(array) {
+        google.charts.load("current", { packages: ["corechart"] });
+        google.charts.setOnLoadCallback(drawChart);
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable(array);
+
+            var options = {
+                title: 'Porcentaje de todas las visitas',
+                is3D: true,
+                colors: ['#E00068','#E62A81','#E74490','#E55F9D','#EE84B5']
+            };
+
+            var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
+            chart.draw(data, options);
+        }
+    }
+</script>
+{{> footer }}
